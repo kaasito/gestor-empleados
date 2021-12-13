@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
-    public function altaUsuario(Request $req){
+
+    public function registrar(Request $req){
 
 
         $password = $req->password;
