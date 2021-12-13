@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-
+use App\Models\User;
 class ValidarPermisoUsuario
 {
     /**
@@ -14,7 +14,7 @@ class ValidarPermisoUsuario
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $req, Closure $next)
     {
     
     if($req->has('api_token')){
@@ -23,15 +23,36 @@ class ValidarPermisoUsuario
         $usuario = User::where('api_token', $token)->first();
 
         if(!$usuario){
-            return response("Apikey no vale", 401);
+            return response("Api key no vale", 401);
         }else{
-             $request->usuario = $usuario;
-             return $next($request);
+            
+            $puesto = $usuario->puesto;
+            switch ($puesto) {
+                case 'empleado':
+                    $permiso = 1;
+                    break;
+                case 'RRHH':
+                    $permiso = 2;
+                    break;
+                case 'Directivo':
+                    $permiso = 3;
+                    break;
+                    
+                default:
+                    return response("No tiene puesto", 401);
+                    break;
+                }
+                if($permiso>1){
+                    return $next($req);
+                }else{
+                    return response("No tienes permisos", 401);
+                }
+                
         }
 
     }else{
 
-        return respone("No api key", 401);
+        return response("No api key", 401);
     }    
        
        
