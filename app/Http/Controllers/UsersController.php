@@ -14,8 +14,8 @@ class UsersController extends Controller
 
         if($password){
 
-            if(!preg_match(/[a-z]{6,}/, $password))
-                $valido = true
+            if(!preg_match("/[a-z]{6,}/", $password))
+                $valido = true;
         }else{
             $valido = false; 
         }
