@@ -20,7 +20,7 @@ class ValidarPermisoUsuario
     if($req->has('api_token')){
 
         $token = $req->input('api_token');
-        $usuario = User::where('api_token', $token)->first();
+        $usuario = User::where('api_token', $token)->first(); //devuelve objeto
 
         if(!$usuario){
             return response("Api key no vale", 401);
@@ -37,11 +37,11 @@ class ValidarPermisoUsuario
                 case 'Directivo':
                     $permiso = 3;
                     break;
-                    
                 default:
                     return response("No tiene puesto", 401);
                     break;
                 }
+                
                 if($permiso>1){
                     return $next($req);
                 }else{
