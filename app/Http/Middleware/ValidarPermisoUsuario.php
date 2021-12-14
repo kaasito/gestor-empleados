@@ -38,10 +38,10 @@ class ValidarPermisoUsuario
                     $permiso = 3;
                     break;
                 default:
-                    return response("No tiene puesto", 401);
+                    return response("No tiene puesto", 401); 
                     break;
                 }
-                
+
                 if($permiso>1){
                     return $next($req);
                 }else{
