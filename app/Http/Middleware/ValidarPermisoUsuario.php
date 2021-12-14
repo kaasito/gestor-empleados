@@ -34,7 +34,7 @@ class ValidarPermisoUsuario
                 case 'RRHH':
                     $permiso = 2;
                     break;
-                case 'Directivo':
+                case 'directivo':
                     $permiso = 3;
                     break;
                 default:

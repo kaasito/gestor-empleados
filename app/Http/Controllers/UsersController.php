@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
@@ -12,7 +13,11 @@ class UsersController extends Controller
         
         $validator = Validator::make(json_decode($req->getContent(),), [
             'nombre' => 'required|unique:posts|max:255',
+            'puesto' => 'required',
             'password' => 'required',
+            'email' => 'required',
+            'salario' => 'required',
+            'biografia' => 'required',
         ]);
         
         if ($validator->fails()) {
@@ -27,7 +32,6 @@ class UsersController extends Controller
             $usuario = new User();
             $usuario->nombre = $datos->nombre;
             $usuario->email = $datos->email;
-
             $usuario->password = $datos->password;
             $usuario->foto_perfil = $datos->foto_perfil;
             try{
@@ -75,11 +79,22 @@ class UsersController extends Controller
         }*/
     }
     public function login(Request $req){
-        //Validar los datos
+        
+        
+        $jdatos = $req->getContent();
+        $datos = json_decode($jdatos);
 
 
-        //Buscar al usuario por su email
 
-        $usuario = User::where('email', $req->email)->first();
+        $usuario = User::where('email', $datos->email)->first();
+        if($usuario && Hash::check($datos->password, $usuario->password)){
+            $token = Hash::make(now().$usuario->email);
+            $usuario->api_token = $token;
+            $usuario->save();
+            $respuesta["token"] = $token;
+        }else{
+            $respuesta["msg"] = 401;
+        }
+        return response()->json($respuesta);
     }
 }

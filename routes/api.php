@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['check-permiso'])->get('/user', function () { //api-auth saca de la request el api token; admin ver en el request quien está haciendo la peticition
-    Route::put('registrar',[UsersController::class,'registrar']);
-    Route::put('login',[UsersController::class,'login'])->withoutMiddleware('check-permiso');
+Route::middleware(['check-permiso'])->group(function () { 
+    Route::prefix("user")->group(function(){
+        Route::put('registrar',[UsersController::class,'registrar']);
+        Route::put('login',[UsersController::class,'login'])->withoutMiddleware('check-permiso');
+    });
+    
 });
 
 //Route::middleware('check-user')->get(...)
