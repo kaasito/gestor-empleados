@@ -17,7 +17,7 @@ use App\Http\Controllers\UsersController;
 
 Route::middleware(['check-permiso'])->group(function () { 
     Route::prefix("user")->group(function(){
-        Route::put('registrar',[UsersController::class,'registrar']);
+        Route::post('registrar',[UsersController::class,'registrar']);
         Route::put('login',[UsersController::class,'login'])->withoutMiddleware('check-permiso');
     });
     

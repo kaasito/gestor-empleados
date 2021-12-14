@@ -11,29 +11,30 @@ class UsersController extends Controller
     public function registrar(Request $req){
 
         
-        $validator = Validator::make(json_decode($req->getContent(),), [
-            'nombre' => 'required|unique:posts|max:255',
+        $validator = Validator::make(json_decode($req->getContent(), true), [
+            'name' => 'required',
             'puesto' => 'required',
             'password' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users',
             'salario' => 'required',
             'biografia' => 'required',
         ]);
         
         if ($validator->fails()) {
-            return redirect('post/create')
-                        ->withErrors($validator)
-                        ->withInput();
-        }
+            $respuesta["msg"] = $validator->errors()->first();
+            $respuesta["status"] = 0;
+        } else {
 
             $respuesta = ["status" => 1, "msg" => ""];
             $datos = $req->getContent();
             $datos = json_decode($datos);
             $usuario = new User();
-            $usuario->nombre = $datos->nombre;
-            $usuario->email = $datos->email;
+            $usuario->name = $datos->name;
+            $usuario->puesto = $datos->puesto;
             $usuario->password = $datos->password;
-            $usuario->foto_perfil = $datos->foto_perfil;
+            $usuario->email = $datos->email;
+            $usuario->salario = $datos->salario;
+            $usuario->biografia = $datos->biografia;
             try{
                 $respuesta["status"] = 1;
                 $respuesta["msg"] = "Usuario creado con éxito";
@@ -42,6 +43,8 @@ class UsersController extends Controller
                 $respuesta["msg"] = $e ->getMessage();
                 $respuesta["status"] = 0;
             }
+        }
+
             return response()->json($respuesta);
         
         

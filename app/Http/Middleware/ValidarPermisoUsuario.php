@@ -16,10 +16,12 @@ class ValidarPermisoUsuario
      */
     public function handle(Request $req, Closure $next)
     {
-    
-    if($req->has('api_token')){
+    $jdata = $req->getContent();
+    $datos = json_decode($jdata);
+    if($datos->api_token){
 
-        $token = $req->input('api_token');
+        
+        $token = $datos->api_token;
         $usuario = User::where('api_token', $token)->first(); //devuelve objeto
 
         if(!$usuario){
