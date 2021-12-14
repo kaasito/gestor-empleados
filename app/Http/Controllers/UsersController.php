@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Mail\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
@@ -107,15 +110,14 @@ class UsersController extends Controller
            $password = generarPass("abcdefghijklmnopqrstuvwxyz1234567890¿?!¡_",8);
            $usuario->password = Hash::make($password);
            $usuario->save();
+           Mail::to($usuario->email)->send(new Notification("
+           Confirme cambio de contraseña", "Se ha realizado un cambio en su contraseña", "hola sofi"));
            $respuesta["password"] = "Nueva contraseña: ".$password;
         }else{
             $respuesta["msg"] = 401;
         }
         return response()->json($respuesta);
     }
-
-
-
 }
 
 function generarPass($opciones, $lengt = 5){
