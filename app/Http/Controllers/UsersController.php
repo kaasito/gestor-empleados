@@ -14,7 +14,7 @@ class UsersController extends Controller
         $validator = Validator::make(json_decode($req->getContent(), true), [
             'name' => 'required',
             'puesto' => 'required',
-            'password' => 'required',
+            'password' => 'required|regex:/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[A-Za-z0-9]).{6,}/',
             'email' => 'required|unique:users',
             'salario' => 'required',
             'biografia' => 'required',
