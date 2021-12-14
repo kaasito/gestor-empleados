@@ -46,12 +46,9 @@ class ValidarPermisoUsuario
                     return $next($req);
                 }else{
                     return response("No tienes permisos", 401);
-                }
-                
+                }       
         }
-
     }else{
-
         return response("No api key", 401);
     }    
        

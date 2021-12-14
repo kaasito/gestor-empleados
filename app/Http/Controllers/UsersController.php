@@ -9,8 +9,39 @@ class UsersController extends Controller
 
     public function registrar(Request $req){
 
+        
+        $validator = Validator::make(json_decode($req->getContent(),), [
+            'nombre' => 'required|unique:posts|max:255',
+            'password' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            return redirect('post/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
-        $password = $req->password;
+            $respuesta = ["status" => 1, "msg" => ""];
+            $datos = $req->getContent();
+            $datos = json_decode($datos);
+            $usuario = new User();
+            $usuario->nombre = $datos->nombre;
+            $usuario->email = $datos->email;
+
+            $usuario->password = $datos->password;
+            $usuario->foto_perfil = $datos->foto_perfil;
+            try{
+                $respuesta["status"] = 1;
+                $respuesta["msg"] = "Usuario creado con éxito";
+                $usuario->save();
+            }catch(\Exception $e){
+                $respuesta["msg"] = $e ->getMessage();
+                $respuesta["status"] = 0;
+            }
+            return response()->json($respuesta);
+        
+        
+       /* $password = $req->password;
         $valido = true;
 
         if($password){
@@ -41,7 +72,7 @@ class UsersController extends Controller
             return redirect('post/create')
                         ->withErrors($validator)
                         ->withInput();
-        }
+        }*/
     }
     public function login(Request $req){
         //Validar los datos
