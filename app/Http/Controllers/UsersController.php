@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
-
-    
     public function registrar(Request $req){
 
         
@@ -136,7 +134,24 @@ class UsersController extends Controller
         
          return response()->json($respuesta);
     }
-    
+    public function verPerfil(Request $req){
+        $jdatos = $req->getContent();
+        $datos = json_decode($jdatos);
+
+        $usuario = User::where('api_token', $datos->api_token)->first();
+
+        if($usuario->api_token){
+            $respuesta["Nombre"] = $usuario->name;
+            $respuesta["Email"] = $usuario->email;
+            $respuesta["Puesto"] = $usuario->puesto;
+            $respuesta["Salario"] = $usuario->salario;
+            $respuesta["Biografía"] = $usuario->biografia;
+        }else{
+            $respuesta["msg"] = "No se ha logueado";
+        }
+        return response()->json($respuesta);
+        
+    }
 }
 
 function generarPass($opciones, $lengt = 5){
