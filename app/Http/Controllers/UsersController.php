@@ -110,12 +110,33 @@ class UsersController extends Controller
                 $id++;
             }
         }
-        // if(!$usuario->puesto == "directivo"){
-        //     $respuesta["datos"] = DB::table('users')->get();
-        // }
-        // $respuesta["datos"] = DB::table('users')->get();
         return response()->json($respuesta);
     }
+    public function verEmpleado(Request $req){
+        $jdatos = $req->getContent();
+        $datos = json_decode($jdatos);
+        $peticiario = User::where('api_token', $datos->api_token)->first();
+        $usuario = User::where('email', $datos->email)->first();
+        if($peticiario->puesto == "directivo"){
+            $respuesta["Nombre"] = $usuario->name;
+            $respuesta["Email"] = $usuario->email;
+            $respuesta["Puesto"] = $usuario->puesto;
+            $respuesta["Salario"] = $usuario->salario;
+            $respuesta["Biografía"] = $usuario->biografia;
+        }
+        if($peticiario->puesto == "RRHH" && $usuario->puesto == "empleado"){
+                $respuesta["Nombre"] = $usuario->name;
+                $respuesta["Email"] = $usuario->email;
+                $respuesta["Puesto"] = $usuario->puesto;
+                $respuesta["Salario"] = $usuario->salario;
+                $respuesta["Biografía"] = $usuario->biografia;
+        }else{
+                $respuesta["msg"]= "El usuario no es un empleado y no tienes permiso para ver sus detalles";
+        }
+        
+         return response()->json($respuesta);
+    }
+    
 }
 
 function generarPass($opciones, $lengt = 5){
