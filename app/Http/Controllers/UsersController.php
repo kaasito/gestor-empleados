@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
 class UsersController extends Controller
 {
 
@@ -35,7 +37,7 @@ class UsersController extends Controller
             $usuario = new User();
             $usuario->name = $datos->name;
             $usuario->puesto = $datos->puesto;
-            $usuario->password = $datos->password;
+            $usuario->password = Hash::make($datos->password);
             $usuario->email = $datos->email;
             $usuario->salario = $datos->salario;
             $usuario->biografia = $datos->biografia;
@@ -50,40 +52,6 @@ class UsersController extends Controller
         }
 
             return response()->json($respuesta);
-        
-        
-       /* $password = $req->password;
-        $valido = true;
-
-        if($password){
-
-            if(!preg_match("/[a-z]{6,}/", $password))
-                $valido = true;
-        }else{
-            $valido = false; 
-        }
-
-        $email = $req->email;
-
-        if(User::where('email', $email)->first())
-            $valido = false;
-
-
-        $validator = Validator::make(json_decode($req->getContent(),), [
-            'title' => 'required|unique:posts|max:255',
-            'body' => 'required',
-        ]);
-
-       
-
-       // $usuario->password = Hash::make($req->da);
-
-
-        if ($validator->fails()) {
-            return redirect('post/create')
-                        ->withErrors($validator)
-                        ->withInput();
-        }*/
     }
     public function login(Request $req){
           
@@ -111,11 +79,41 @@ class UsersController extends Controller
            $usuario->password = Hash::make($password);
            $usuario->save();
            Mail::to($usuario->email)->send(new Notification("
-           Confirme cambio de contraseña", "Se ha realizado un cambio en su contraseña", "hola sofi"));
+           Confirme cambio de contraseña", "Se ha realizado un cambio en su contraseña", "que pesao eres aitor no?"));
            $respuesta["password"] = "Nueva contraseña: ".$password;
         }else{
             $respuesta["msg"] = 401;
         }
+        return response()->json($respuesta);
+    }
+    public function listarEmpleados(Request $req){
+        $jdatos = $req->getContent();
+        $datos = json_decode($jdatos);
+
+        $usuario = User::where('api_token', $datos->api_token)->first();
+
+        // $respuesta["datos"] = DB::table('users')->get();
+        $empleados = User::where('puesto', 'empleado')->get();
+        $id = 1;
+        foreach ($empleados as $empleado) {
+            $respuesta[$id]["nombre"] = $empleado->name;
+            $respuesta[$id]["puesto"] = $empleado->puesto;
+            $respuesta[$id]["salario"] = $empleado->salario;
+            $id++;
+        }
+        if($usuario->puesto == "directivo"){
+            $rrhh = User::where('puesto', 'RRHH')->get();
+            foreach ($rrhh as  $empleado) {
+                $respuesta[$id]["nombre"] = $empleado->name;
+                $respuesta[$id]["puesto"] = $empleado->puesto;
+                $respuesta[$id]["salario"] = $empleado->salario;
+                $id++;
+            }
+        }
+        // if(!$usuario->puesto == "directivo"){
+        //     $respuesta["datos"] = DB::table('users')->get();
+        // }
+        // $respuesta["datos"] = DB::table('users')->get();
         return response()->json($respuesta);
     }
 }
