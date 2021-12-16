@@ -22,6 +22,7 @@ Route::middleware(['check-permiso'])->group(function () {
         Route::get('listarEmpleados',[UsersController::class,'listarEmpleados']);
         Route::get('verEmpleado',[UsersController::class,'verEmpleado']);
         Route::get('verPerfil',[UsersController::class,'verPerfil']);
+        Route::post('modificarEmpleado',[UsersController::class,'modificarEmpleado']);
         Route::put('login',[UsersController::class,'login'])->withoutMiddleware('check-permiso');
     });
     

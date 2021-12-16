@@ -137,6 +137,7 @@ class UsersController extends Controller
     public function verPerfil(Request $req){
         $jdatos = $req->getContent();
         $datos = json_decode($jdatos);
+       
 
         $usuario = User::where('api_token', $datos->api_token)->first();
 
@@ -151,6 +152,115 @@ class UsersController extends Controller
         }
         return response()->json($respuesta);
         
+    }
+    public function modificarEmpleado(Request $req){
+        
+        $datos = $req->getContent();
+        $datos = json_decode($datos);
+        $correo = $req->input('correo', '');
+        $peticiario = User::where('api_token', $datos->api_token)->first();
+        $usuario = User::where('email', $correo)->first();
+        
+        if($peticiario->puesto == "directivo"){//el peticiario es directivo 
+            if($usuario->puesto == "directivo"){//el usuario es directivo tambien
+                if($usuario->email == $peticiario->email){//el usuario es la misma persona que hace la petición
+                    if(isset($datos->name))
+                    $usuario->name = $datos->name;
+
+                    if(isset($datos->name))
+                    $usuario->puesto = $datos->puesto;
+
+                    if(isset($datos->name))
+                    $usuario->password = Hash::make($datos->password);
+            
+                    if(isset($datos->name))
+                    $usuario->email = $datos->email;
+                
+                    if(isset($datos->name))
+                    $usuario->salario = $datos->salario;
+
+                    if(isset($datos->name))
+                    $usuario->biografia = $datos->biografia;
+        
+                    $usuario->save();
+                    $respuesta["msg"] = "Usuario editado con éxito";
+                    
+                }else{//el usuario es otro directivo
+                    $respuesta["msg"] = "No puedes editar a otro directivo";
+                }
+            }   
+            if($usuario->puesto == "empleado"){
+                if(isset($datos->name))
+                $usuario->name = $datos->name;
+
+                if(isset($datos->name))
+                $usuario->puesto = $datos->puesto;
+
+                if(isset($datos->name))
+                $usuario->password = Hash::make($datos->password);
+        
+                if(isset($datos->name))
+                $usuario->email = $datos->email;
+            
+                if(isset($datos->name))
+                $usuario->salario = $datos->salario;
+
+                if(isset($datos->name))
+                $usuario->biografia = $datos->biografia;
+    
+                $usuario->save();
+                $respuesta["msg"] = "Usuario editado con éxito";
+            }  
+            if($usuario->puesto == "RRHH"){
+                if(isset($datos->name))
+                $usuario->name = $datos->name;
+
+                if(isset($datos->name))
+                $usuario->puesto = $datos->puesto;
+
+                if(isset($datos->name))
+                $usuario->password = Hash::make($datos->password);
+        
+                if(isset($datos->name))
+                $usuario->email = $datos->email;
+            
+                if(isset($datos->name))
+                $usuario->salario = $datos->salario;
+
+                if(isset($datos->name))
+                $usuario->biografia = $datos->biografia;
+    
+                $usuario->save();
+                $respuesta["msg"] = "Usuario editado con éxito";
+            }  
+        }
+        if($peticiario->puesto == "RRHH"){//el peticiario es RRHH
+               if($usuario->puesto == "empleado"){//el usuario es empleado
+                    if(isset($datos->name))
+                        $usuario->name = $datos->name;
+
+                    if(isset($datos->name))
+                        $usuario->puesto = $datos->puesto;
+
+                    if(isset($datos->name))
+                        $usuario->password = Hash::make($datos->password);
+            
+                    if(isset($datos->name))
+                        $usuario->email = $datos->email;
+                
+                    if(isset($datos->name))
+                        $usuario->salario = $datos->salario;
+
+                    if(isset($datos->name))
+                        $usuario->biografia = $datos->biografia;
+        
+                    $usuario->save();
+                    $respuesta["msg"] = "Usuario editado con éxito";
+               }else{
+                    $respuesta["msg"] = "Solo puedes editar a trabajadores que sean empleados";
+               } 
+        }
+        return response()->json($respuesta);
     }
 }
 
