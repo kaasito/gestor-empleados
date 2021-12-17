@@ -91,13 +91,9 @@ class UsersController extends Controller
 
         // $respuesta["datos"] = DB::table('users')->get();
         $empleados = User::where('puesto', 'empleado')->get();
+        
         $id = 1;
-        foreach ($empleados as $empleado) {
-            $respuesta[$id]["nombre"] = $empleado->name;
-            $respuesta[$id]["puesto"] = $empleado->puesto;
-            $respuesta[$id]["salario"] = $empleado->salario;
-            $id++;
-        }
+        
         if($usuario->puesto == "directivo"){
             $rrhh = User::where('puesto', 'RRHH')->get();
             foreach ($rrhh as  $empleado) {
@@ -107,6 +103,13 @@ class UsersController extends Controller
                 $id++;
             }
         }
+        foreach ($empleados as $empleado) {
+            $respuesta[$id]["nombre"] = $empleado->name;
+            $respuesta[$id]["puesto"] = $empleado->puesto;
+            $respuesta[$id]["salario"] = $empleado->salario;
+            $id++;
+        }
+       
         return response()->json($respuesta);
     }
     public function verEmpleado(Request $req){
@@ -127,7 +130,7 @@ class UsersController extends Controller
                 $respuesta["Puesto"] = $usuario->puesto;
                 $respuesta["Salario"] = $usuario->salario;
                 $respuesta["Biografía"] = $usuario->biografia;
-        }else{
+        }else if($peticiario->puesto == "RRHH" && ($usuario->puesto == "directivo" || $usuario->puesto == "RRHH")){
                 $respuesta["msg"]= "El usuario no es un empleado y no tienes permiso para ver sus detalles";
         }
         
@@ -259,6 +262,9 @@ class UsersController extends Controller
                     $respuesta["msg"] = "Solo puedes editar a trabajadores que sean empleados";
                } 
         }
+        if($peticiario->puesto == "empleado"){//el peticiario es RRHH
+            $respuesta["msg"] = "Los empleados no pueden modificar otros usuarios"; 
+     }
         return response()->json($respuesta);
     }
 }
