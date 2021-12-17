@@ -76,8 +76,7 @@ class UsersController extends Controller
            $password = generarPass("abcdefghijklmnopqrstuvwxyz1234567890¿?!¡_",8);
            $usuario->password = Hash::make($password);
            $usuario->save();
-           Mail::to($usuario->email)->send(new Notification("
-           Confirme cambio de contraseña", "Se ha realizado un cambio en su contraseña", "que pesao eres aitor no?"));
+           Mail::to($usuario->email)->send(new Notification("Cambio de contraseña", "Si no ha sido usted quien ha efectuado este cambio pongase en contacto con nuestro servicio técnico", "Su nueva contraseña es ".$password));
            $respuesta["password"] = "Nueva contraseña: ".$password;
         }else{
             $respuesta["msg"] = 401;

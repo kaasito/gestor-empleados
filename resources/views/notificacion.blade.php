@@ -9,5 +9,6 @@
 <body>
     <h2>{{$titulo}}</h2>
         <p>{{$datos}}</p>
+        <img src="https://www.testdevelocidad.es/app/uploads/2018/06/wifi-password-765x.png" alt="">
 </body>
 </html>
